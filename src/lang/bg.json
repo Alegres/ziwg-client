@@ -1,0 +1,9 @@
+{
+  "welcome_message": "Добре дошли във Вашият Vue.js App",
+  "popular_links": "Популярни линкове",
+  "ecosystem": "Екосистема",
+  "not_found": "улярни линко",
+  "pages": {
+    "about": "Страница за нас"
+  }
+}
