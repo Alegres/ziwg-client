@@ -1,0 +1,12 @@
+{
+    "welcome_message": "Witaj w aplikacji Vue!",
+    "not_found": "Nie znaleziono strony",
+    "pages": {
+      "about": "Informacje",
+      "hello": "Witaj świecie!",
+      "login": {
+        "header": "Strona logowania"
+      }
+    }
+  }
+  

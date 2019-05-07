@@ -1,0 +1,2 @@
+export const MAX_OPTIMAL_TEMPERATURE = 50
+export const MIN_OPTIMAL_TEMPERATURE = 0

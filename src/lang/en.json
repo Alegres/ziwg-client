@@ -1,9 +1,76 @@
 {
+  "app_title": "Plants",
+  "app_description": "Here, you will be able to remotely manage your plants. Create an account and login to the system!",
   "welcome_message": "Welcome to Your Vue.js App",
   "popular_links": "Popular Links",
   "ecosystem": "Ecosystem",
   "not_found": "Page not found",
+  "not_found_explanation": "We are sorry, but the page you were looking for does not exist.",
+  "loading": "Loading...",
   "pages": {
-    "about": "About Page"
+    "presets": {
+      "create_form_send": "Add preset",
+      "create_preset": "Create a new preset",
+      "presets": "Presets",
+      "no_presets": "Currently there are no presets.",
+      "modify_preset": "Modify the preset",
+      "modify_form_send": "Modify",
+      "preset_name": "Name of the preset",
+      "optimal_temperature": "Optimal temperature",
+      "preset_color": "Color of the preset",
+      "no_preset": "Preset does not exist."      
+    },
+    "measurements": {
+      "not_connected": "Not connected"
+    },
+    "plants": {
+      "create_plant": "Create plant",
+      "manage_plant": "Manage your plant",
+      "create_form_send": "Make it grow!",
+      "plants": "Plants",
+      "no_plants": "Currently there are no plants.",
+      "no_preset": "Select preset...",
+      "preset_required": "You must select a preset!",
+      "plantname_required": "You must name your plant!",
+      "no_plant": "Such plant does not exist.",
+      "modify_form_send": "Modify plant"
+    },
+    "about": "About Page",
+    "hello": "Hello world",
+    "login": {
+      "header": "Let's login",
+      "submit_form": "Sign in",
+      "remember": "Remember me",
+      "password_required": "Password is required!",
+      "username_required": "Username is required!"
+    },
+    "register": {
+      "header": "Create an account",
+      "submit_form": "Sign in",
+      "password_required": "Password is required!",
+      "username_required": "Email is required!",
+      "passwords_dont_match": "Passwords don't match each other!",
+      "usernames_dont_match": "Email adresses don't match each other!",
+      "password_too_weak": "The password you have entered is too weak!",
+      "email_not_correct": "Email is not correct!"
+    }
+  },
+  "navbar": {
+    "home": "Homepage",
+    "about": "About",
+    "account": "Account",
+    "login": "Login",
+    "register": "Create an account",
+    "logout": "Logout",
+    "board": "Board"
+  },
+  "api": {
+    "errors": {
+      "unkown_code": "Server error",
+      "login": {
+        "correct": "You have been logged in!",
+        "wrong_data": "Provided data is wrong or such user doesn't exist!"
+      }
+    }
   }
 }

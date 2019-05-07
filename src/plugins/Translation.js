@@ -33,6 +33,14 @@ const Trans = {
     return Trans.defaultLanguage
   },
   /**
+   * Returns path without current language
+   * @param {RouterTo} routerTo
+   * @return {String} routeWithLang
+   */
+  getRouteWithoutLang (routerTo) {
+    return routerTo.path.split('/')[2]
+  },
+  /**
    * Returns the users preferred language
    */
   getUserLang () {
@@ -106,6 +114,9 @@ const Trans = {
       ...to,
       params: { lang: this.currentLanguage, ...to.params }
     }
+  },
+  pushToLanguagePath (path) {
+    router.push('/' + Trans.currentLanguage + path);
   }
 }
 
