@@ -16,9 +16,17 @@
       "modify_preset": "Modify the preset",
       "modify_form_send": "Modify",
       "preset_name": "Name of the preset",
-      "optimal_temperature": "Optimal temperature",
+      "min_temperature": "Minimal temperature",
+      "max_temperature": "Maximal temperature",
+      "min_humidity": "Minimal humidity",
+      "max_humidity": "Maximal humidity",
+      "min_soil": "Minimal soil",
+      "max_soil": "Maximal soil",
+      "expected_growth": "Expected weekly growth",
       "preset_color": "Color of the preset",
-      "no_preset": "Preset does not exist."      
+      "no_preset": "Preset does not exist.",
+      "how_often_to_water": "How often to water?",
+      "how_long_to_water": "How long to water?"      
     },
     "measurements": {
       "not_connected": "Not connected"
@@ -33,7 +41,8 @@
       "preset_required": "You must select a preset!",
       "plantname_required": "You must name your plant!",
       "no_plant": "Such plant does not exist.",
-      "modify_form_send": "Modify plant"
+      "modify_form_send": "Modify plant",
+      "parameters": "Current plant situation"
     },
     "about": "About Page",
     "hello": "Hello world",
@@ -52,7 +61,29 @@
       "passwords_dont_match": "Passwords don't match each other!",
       "usernames_dont_match": "Email adresses don't match each other!",
       "password_too_weak": "The password you have entered is too weak!",
-      "email_not_correct": "Email is not correct!"
+      "email_not_correct": "Email is not correct!",
+      "phone_not_correct": "Phone number is not correct!"
+    },
+    "settings": {
+      "user_settings": "User settings",
+      "modify_form_send": "Modify user data",
+      "change_password": "Change password",
+      "current_passoword_incorrect": "Provided current password is incorrect!",
+      "username": "Username",
+      "name": "First name",
+      "last_name": "Last name",
+      "phone_number": "Phone number",
+      "email": "Email address",
+      "repeated_email": "Repeat your email",
+      "modify_data": "Modify data",
+      "modify_password": "Change password",
+      "current_password": "Current password",
+      "new_password": "New password",
+      "repeated_password": "Repeat password",
+      "firstname_required": "First name is required",
+      "lastname_required": "Last name is required",
+      "phonenumber_required": "Phone number is required",
+      "email_required": "Email is required"
     }
   },
   "navbar": {
@@ -70,6 +101,26 @@
       "login": {
         "correct": "You have been logged in!",
         "wrong_data": "Provided data is wrong or such user doesn't exist!"
+      },
+      "presets": {
+        "preset_in_use": "This preset is in use and cannot be removed!"
+      },
+      "settings": {
+        "wrong_password_data": "Wrong password data!"
+      }
+    },
+    "success": {
+      "presets": {
+        "created": "Preset created successfully!",
+        "removed": "Preset removed successfully!"
+      },
+      "plants": {
+        "removed": "Plant removed succesfully!",
+        "created": "Plant created succesfully!"
+      },
+      "settings": {
+        "password_changed": "Password changed successfully!",
+        "user_updated": "User updated successfully!"
       }
     }
   }

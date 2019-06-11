@@ -47,6 +47,10 @@ export default [
             component: loadComponent('Plant')
           },
           {
+            path: 'settings',
+            component: loadComponent('UserSettings')
+          },
+          {
             name: 'main-board',
             path: 'main',
             component: loadComponent('MainBoard')

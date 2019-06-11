@@ -2,8 +2,13 @@ import { i18n } from '@/plugins/i18n'
 import { apiDefinition } from '@/constants/apiDefinition';
 
 export const PlantMessagesService = {
-    getMessageAfterAddingPlant
+    getMessageAfterAddingPlant,
+    getMessageAfterRemovingPlant
 };
+
+function getMessageAfterRemovingPlant() {
+    return i18n.tc('api.success.plants.removed')
+}
 
 function getMessageAfterAddingPlant(response) {
     let message = "";

@@ -11,11 +11,12 @@
                 </div>
             </div>
             <div class="nav-element-content">
-                <p v-if="!presets">{{ $t('pages.presets.no_presets') }}</p>
+                <p v-if="presets.length == 0">{{ $t('pages.presets.no_presets') }}</p>
 
                 <ul class="nav-list">
                     <li v-for="preset in presets">
-                        <div class="color-square" v-bind:style="{ backgroundColor: preset.color }"></div>
+                        <div class="color-square" v-if="!preset.color" style="background-color: grey"></div>
+                        <div class="color-square" v-else v-bind:style="{ backgroundColor: preset.color }"></div>
                         <div class="square-description pointer" v-on:click="goToPreset(preset)">{{ preset.name }}</div>
                     </li>
                 </ul>
@@ -34,13 +35,12 @@ export default {
     };
   },
   created() {
-    this.getAllPresets();
+
   },
   computed: {
     ...mapState("preset", ["status", "presets"])
   },
   methods: {
-    ...mapActions("preset", ["getAllPresets"]),
     createPreset: function() {
         LanguageRouter.pushToPath('/board/create-preset')
     },

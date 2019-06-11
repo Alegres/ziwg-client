@@ -6,7 +6,8 @@
     <div v-if="currentPlant">
       <div class="form">
         <form class="form-signin" @submit.prevent="handleSubmit">
-          <h2 class="form-signin-heading">{{ $t('pages.plants.manage_plant') }}</h2>
+          <h2 class="form-signin-heading left">{{ $t('pages.plants.manage_plant') }}</h2>
+          <div class="remove" v-on:click="removePlant()"><fa-icon icon="trash"/></div>
           <div class="form-group">
             <input
               type="text"
@@ -74,29 +75,11 @@
             <strong>Secret code:</strong>
             <div class="code-box">
               <p>
-                {{ newPlant.secret }}
+                {{ newPlant.secret_code }}
               </p>
             </div>
           </li>
-          <li>
-            <strong>Status:</strong>
-            <div class="parameter-value">
-              <div class="nav-ico">
-                <fa-icon icon="plug"/>
-              </div>
-              <span class="ico-value">{{ $t('pages.measurements.not_connected') }}</span>
-            </div>
-          </li>
-          <li>
-            <strong>Optimal temperature:</strong>
-            <div v-if="newPlant.preset" class="parameter-value">
-              <div class="nav-ico">
-                <fa-icon icon="thermometer-half"/>
-              </div>
-              <span class="ico-value more-left">{{ newPlant.preset.temperature }} &#8451;</span>
-            </div>
-            <div v-else>{{ $t('pages.plants.no_preset') }}</div>
-          </li>
+          <br />        
         </ul>
       </div>
 
@@ -132,14 +115,22 @@ export default {
     };
   },
   methods: {
-    ...mapActions("plant", ["getPlant", "updatePlant"]),
+    ...mapActions("plant", ["getPlant", "updatePlant", "deletePlant"]),
+    ...mapActions("preset", ["getPresetById"]),
     loadPlantIfNoAnotherActionInProgress(plantName) {
       if (!this.status.gettingPlants && !this.status.updatingPlant) {
+
         this.getPlant({ plantName });
 
         // Make a working copy of a current plant
         this.newPlant = Object.assign({}, this.currentPlant);
+        
+        this.getPresetById(this.newPlant.id_preset);
+        this.newPlant.preset = Object.assign({}, this.currentPreset);
       }
+    },
+    getPresetForPlant(plant) {
+      plant.preset = this.getPresetWithId(plant.id_preset)
     },
     setSelectedColorFromPicker(selectedColor) {
       this.plantColor = selectedColor;
@@ -150,29 +141,39 @@ export default {
       this.submitted = true;
       const color = plantColor.name;
 
-      if (this.newPlant.name && this.newPlant.preset && plantColor) {
-        this.newPlant.color = color;
+      this.newPlant.color = color;
 
-        this.updatePlant(this.newPlant).then(updatedPlant => {
-          LanguageRouter.pushToPath("/board/plant/" + updatedPlant.name);
+      this.updatePlant(this.newPlant).then(updatedPlant => {
+        LanguageRouter.pushToPath("/board/plant/" + updatedPlant.name);
 
-          // Update the key, in order to reload component
-          this.$parent.currentKey = updatedPlant.name;
-        });
-      }
+        // Update the key, in order to reload component
+        this.$parent.currentKey = updatedPlant.name;
+      });
+    },
+    removePlant: function() {
+      this.$dialog
+        .confirm('Please confirm to continue')
+        .then(function(dialog) {
+          this.deletePlant(this.currentPlant)
+          LanguageRouter.pushToPath("/board/main/");
+        }.bind(this))
+        .catch(function() {
+          // Do nothing
+        });      
     },
     togglePresetPicker() {
       this.showPresetPicker = !this.showPresetPicker;
     },
     selectPreset(preset) {
       this.newPlant.preset = preset;
+      this.newPlant.id_preset = preset.id;
       this.presetName = preset.name;
       this.showPresetPicker = false;
     }
   },
   computed: {
-    ...mapState("plant", ["status", "plants", "currentPlant"]),
-    ...mapState("preset", ["presets"])
+    ...mapState("plant", ["status", "plants", "currentPlant", "measurements"]),
+    ...mapState("preset", ["presets", "currentPreset"])
   },
   components: {
     Measurements,
@@ -192,6 +193,14 @@ export default {
 </script>
 
 <style scoped>
+.main-parameters {
+  padding: 2px;
+  border-left: 3px solid rgb(104, 104, 104);
+  margin-top: 10px;
+}
+.main-parameters li {
+  margin-left: 20px;
+}
 .form-signin {
   margin: 1px !important;
   border: 0 !important;
@@ -232,5 +241,17 @@ export default {
 .plant-info {
   text-align: left !important;
   margin-top: -25px;
+}
+
+.left {
+  display: inline-block;
+}
+
+.remove {
+  display: inline-block;
+  position: relative;
+  top: -3px;
+  cursor: pointer;
+  left: 20px;
 }
 </style>

@@ -25,7 +25,13 @@ export default {
         { name: "lightcoral", isActive: false },
         { name: "midnightblue", isActive: false },
         { name: "firebrick", isActive: false },
-        { name: "grey", isActive: false }
+        { name: "grey", isActive: false },
+        { name: "pink", isActive: false },
+        { name: "purple", isActive: false },
+        { name: "lightgreen", isActive: false },
+        { name: "indigo", isActive: false },
+        { name: "orange", isActive: false },
+        { name: "peru", isActive: false },
       ]
     };
   },

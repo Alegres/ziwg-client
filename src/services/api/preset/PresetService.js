@@ -1,12 +1,8 @@
 import axios from 'axios';
 import Api from '@/services/api/Api'
+import { authHeader } from '@/helpers/authHeader'
 
-const API_URL = '/preset'
-let presets = [
-    { id: 1, name: 'Marijuana', color: 'palegreen', temperature: 10 },
-    { id: 2, name: 'Grass', color: 'burlywood',  temperature: 23 },
-    { id: 3, name: 'Oregano', color: 'grey',  temperature: 18 }
-]
+const API_URL = 'https://plants.ml/api'
 
 export const PresetService = {
     getAll,
@@ -17,44 +13,49 @@ export const PresetService = {
 };
 
 function getAll() {
-    return new Promise(resolve => {
-        setTimeout(function () {
-            resolve(presets);
-        }, 1000);
-    });
+    return Api().get(API_URL + '/preset/', {
+        headers: authHeader()
+    })
+        .then(response => {
+            return response.data;
+        });
 }
-
 function getOne(presetId) {
-
+    return Api().get(API_URL + '/preset/' + presetId)
+        .then(response => {
+            return response.data;
+        });
 }
 
 function create(preset) {
-    return new Promise(resolve => {
-        setTimeout(function () {
-            preset.id = presets.length + 1;
-            console.log("Pushing preset: " + preset)
-            presets.push(preset);
-            resolve(preset);
-        }, 1000);
-    });    
+    return Api().post(API_URL + '/preset/',
+        preset,
+        {
+            headers: authHeader()
+        })
+        .then(response => {
+            return response.data;
+        });
 }
 
 function update(preset) {
-    return new Promise(resolve => {
-        setTimeout(function () {
-            for(let ia = 0; ia < presets.length; ia++) {
-                if(presets[ia].name === preset.name) {
-                    presets[ia] = preset;
-                    resolve(preset);
-                    break;
-                }
-            }   
-            resolve();     
-        }, 1000);
-    });     
+    return Api().put(API_URL + '/preset/' + preset.id + '/',
+        preset,
+        {
+            headers: authHeader()
+        })
+        .then(response => {
+            return response.data;
+        });
 }
 
 function remove(presetId) {
-
+    return Api().delete(API_URL + '/preset/' + presetId + '/',
+        {
+            headers: authHeader()
+        })
+        .then(response => {
+            return response.data;
+        });
 }
 

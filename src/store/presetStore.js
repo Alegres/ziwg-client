@@ -1,5 +1,3 @@
-import { Trans } from '@/plugins/Translation';
-import router from '@/router';
 import { PresetMessagesService } from '@/services/api/preset/PresetMessagesService';
 import { PresetService } from '@/services/api/preset/PresetService';
 
@@ -17,6 +15,8 @@ const actions = {
             // API Call to update a preset
             PresetService.update(newPreset).then(
                 preset => {
+                    console.log("UPDATING")
+                    console.log(newPreset)
                     commit('updatePresetLocally', newPreset);
                     resolve(newPreset);
                 },
@@ -28,7 +28,21 @@ const actions = {
             )
         });
     },
-    getPreset({ commit, state }, { presetName }) {
+    getPresetById({ commit, state }, presetId) {
+        let found = false;
+
+        for(var ia = 0; ia < state.presets.length; ia++) {
+            if(state.presets[ia].id == presetId) {
+                commit('setPreset', state.presets[ia]);
+                found = true;
+                break;
+            }
+        }
+
+        if(!found)
+            commit('getPresetRequestError')
+    },
+    getPresetByName({ commit, state }, { presetName }) {
         let found = false;
 
         for(var ia = 0; ia < state.presets.length; ia++) {
@@ -45,6 +59,7 @@ const actions = {
     getAllPresets({ dispatch, commit }) {
         commit('getAllPresetsRequest');
 
+        console.log("GETTING ALL PRESETS")
         PresetService.getAll().then(
             presets => {
                 commit('getAllPresetsSuccess', presets);
@@ -55,25 +70,40 @@ const actions = {
             }
         );
     },
-    createPreset({ dispatch, commit }, { name, temperature, color }) {
+    createPreset({ dispatch, commit }, newPreset) {
         commit('createPresetRequest');
-
-        let newPreset = {
-            name: name,
-            temperature: temperature,
-            color: color
-        }
 
         // API Call to create a preset
         PresetService.create(newPreset).then(
             preset => {
                 commit('createPresetSuccess', preset);
+                dispatch('alert/success', PresetMessagesService.getMessageAfterCreatingPreset(), { root: true });
             },
             error => {
                 commit('createPresetError', error);
                 dispatch('alert/error', PresetMessagesService.getMessageAfterCreatingPresetError(error.response), { root: true });
             }
         )
+    },
+    deletePreset({ dispatch, commit }, preset) {
+        commit('deletePresetRequest');
+
+        dispatch('plant/checkIfPresetInUse', preset, {root:true}).then(() => {
+            // API Call to remove a preset
+            PresetService.remove(preset.id).then(
+                complete => {
+                    commit('deletePresetSuccess', preset);
+                    dispatch('alert/success', PresetMessagesService.getMessageAfterRemovingPreset(), { root: true });
+                },
+                error => {
+                    commit('deletePresetError', error);
+                    dispatch('alert/error', PresetMessagesService.getMessageAfterRemovingPresetError(error.response), { root: true });
+                }
+            )            
+        }, error => {
+            commit('deletePresetError', error);
+            dispatch('alert/error', PresetMessagesService.getMessageWhenPresetInUse(), { root: true });
+        })
     }
 };
 
@@ -82,14 +112,36 @@ const mutations = {
         state.status = { updatingPreset: true }
     },
     updatePresetLocally(state, preset) {
-        state.currentPreset.name = preset.name;
-        state.currentPreset.temperature = preset.temperature;
-        state.currentPreset.color = preset.color;
+        // Update preset parameters
+        for(var parameter in preset) {
+            state.currentPreset[parameter] = preset[parameter];
+        }
 
         state.status = { updatingPreset: false }
         state.currentPreset = null;
     },
     updatePresetError(state) {
+        state.status = {};
+    },
+    deletePresetRequest(state) {
+        state.status = { removingPreset: true }
+    },
+    deletePresetSuccess(state, preset) {
+        state.status = { removingPreset: false }
+
+        for(let ia = 0; ia < state.presets.length; ia++) {
+            let presetElement = state.presets[ia];
+
+            console.log(presetElement)
+            console.log(preset.id)
+
+            if(presetElement.id == preset.id) {
+                state.presets.splice(ia, 1)
+                break;
+            }
+        }
+    },
+    deletePresetError(state) {
         state.status = {};
     },
     setPreset(state, preset) {
@@ -103,6 +155,7 @@ const mutations = {
     },
     createPresetSuccess(state, preset) {
         state.status = { creatingPreset: false }
+        state.presets.push(preset)
     },
     createPresetError(state) {
         state.status = {};

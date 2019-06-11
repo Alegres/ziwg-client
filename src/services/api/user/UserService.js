@@ -1,7 +1,11 @@
 import axios from 'axios';
 import Api from '@/services/api/Api'
 
-const API_URL = '/auth'
+const API_URL = 'https://plants.ml/api/auth'
+const USER_URL = 'https://plants.ml/api/user'
+const REFRESH_TOKEN_URL = 'https://plants.ml/jwt/refresh-token/'
+
+import { authHeader } from '@/helpers/authHeader'
 
 let users = [
     { id: 1, name: 'Damian', username: 'test@test.pl', password: 'lol123321' },
@@ -12,56 +16,78 @@ export const UserService = {
     logout,
     register,
     currentUser,
-    getAllUsers
+    getAllUsers,
+    getUserDetails,
+    changePassword,
+    updateUser,    
+    refreshToken
 };
+
+function updateUser(user) {
+    console.log("Updating user")
+    console.log(user)
+    
+    return Api().put(USER_URL + '/' + user.id + '/', user, {
+        headers: authHeader()
+    })
+        .then(response => {
+            return response.data;
+        });    
+}
+
+function changePassword(passwordSet) {
+    return Api().post(API_URL + '/' + 'password/', passwordSet, {
+        headers: authHeader()
+    })
+        .then(response => {
+            return response.data;
+        });    
+}
+
+function getUserDetails() {
+    return Api().get(API_URL + '/' + 'user/', {
+        headers: authHeader()
+    })
+        .then(response => {
+            return response.data;
+        });    
+}
+
+function refreshToken(token) {
+    return Api().post(REFRESH_TOKEN_URL,
+        { "token" : token }
+    )
+        .then(response => {
+            return response.data;
+        });    
+}
 
 function getAllUsers() {
     return new Promise(resolve => {
         setTimeout(function () {
-            resolve(users);     
+            resolve(users);
         }, 1000);
     });
 }
 
 function login(username, password) {
-    const user = {
-        username: username,
-        password: password
-    };
-
-    return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-            
-            for(let ia = 0; ia < users.length; ia++) {
-                if(users[ia].username === user.username && users[ia].password === user.password) {
-                    localStorage.setItem('user', JSON.stringify(user));
-                    resolve(user);
-                }
-            }
-
-            let error = {
-                response: { 
-                    message: "Wrong data!",
-                    status: 401
-                }
-            }
-            reject(error);
-        }, 1000);
-    });
-    /*
-    return Api().post(API_URL + '/login',
-        { user }
+    return Api().post(API_URL + '/login/',
+        { useremail: username, password: password }
     )
         .then(response => {
-            let user = response.data.user
+            console.log("AFTER LOGIN USER")
+            console.log(response.data)
 
-            if(user.token) {
-                localStorage.setItem('user', JSON.stringify(user));
+            let user = {
+                useremail: username,
+                token: response.data.token,
+                last_token_request: new Date()
             }
+                    
+            localStorage.setItem('user', JSON.stringify(user));
 
             return user;
         });
-    */
 }
 
 function currentUser() {
@@ -69,7 +95,7 @@ function currentUser() {
         .then(handleResponse)
         .then(responseData => {
             return responseData
-        }) 
+        })
 }
 
 function logout() {
@@ -77,12 +103,25 @@ function logout() {
 }
 
 function register(user) {
-    return new Promise(resolve => {
-        setTimeout(function () {
-            users.push(user); 
-            resolve(user);     
-        }, 1000);
-    });
+    console.log("REGISTRATION")
+    console.log(user)
+    return Api().post(API_URL + '/register/',
+        { 
+            username: user.name,
+            email: user.username,
+            first_name: user.name,
+            last_name: user.name, 
+            password: user.password,
+            phone_number: user.phone 
+        }
+    )
+        .then(response => {
+            let user = {}
+            console.log("Odp: ")
+            console.log(response)
+
+            return user;
+        });
 }
 
 function handleResponse(response) {

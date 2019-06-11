@@ -10,16 +10,16 @@ const getters = {
 }
 
 const actions = {
-    loadMeasurements({ commit, dispatch }, plantSecret) {
+    loadMeasurements({ commit, dispatch }, plantId) {
         commit('getMeasurementsRequest');
 
-        PlantService.getMeasurements(plantSecret).then(
+        PlantService.getMeasurements(plantId).then(
             measurements => {
                 commit('getMeasurementsSuccess', measurements);
             },
             error => {
                 commit('getMeasurementsError', error);
-                dispatch('alert/error', PlantMessagesService.getMessageAfterGettingPlants(error.response), { root: true });
+                //dispatch('alert/error', PlantMessagesService.getMessageAfterGettingPlants(error.response), { root: true });
             }
         );
     },
@@ -44,15 +44,15 @@ const actions = {
     getPlant({ commit, state }, { plantName }) {
         let found = false;
 
-        for(var ia = 0; ia < state.plants.length; ia++) {
-            if(state.plants[ia].name == plantName) {
+        for (var ia = 0; ia < state.plants.length; ia++) {
+            if (state.plants[ia].name == plantName) {
                 commit('setPlant', state.plants[ia]);
                 found = true;
                 break;
             }
         }
 
-        if(!found)
+        if (!found)
             commit('getPlantRequestError')
     },
     getAllPlants({ dispatch, commit }) {
@@ -68,37 +68,78 @@ const actions = {
             }
         );
     },
-    createPlant({ dispatch, commit }, { name, preset, color }) {
+    createPlant({ dispatch, commit }, newPlant) {
         commit('createPlantRequest');
-
-        console.log(color)
-
-        let newPlant = {
-            name: name,
-            preset: preset,
-            color: color
-        }
 
         // API Call to create a plant
         PlantService.create(newPlant).then(
             plant => {
                 commit('createPlantSuccess', plant);
+                dispatch('alert/success', PlantMessagesService.getMessageAfterCreatingPlant(), { root: true });
             },
             error => {
                 commit('createPlantError', error);
                 dispatch('alert/error', PlantMessagesService.getMessageAfterCreatingPlantError(error.response), { root: true });
             }
         )
+    },
+    checkIfPresetInUse({ commit, state }, preset) {
+        return new Promise((resolve, reject) => {
+            for (let ia = 0; ia < state.plants.length; ia++) {
+                if (state.plants[ia].id_preset == preset.id) {
+                    reject(plant)
+                    break;
+                }
+            }
+            resolve();
+        })
+    },
+    deletePlant({ dispatch, commit }, plant) {
+        commit('deletePlantRequest');
+
+        PlantService.remove(plant.id).then(
+            complete => {
+                commit('deletePlantSuccess', plant);
+                dispatch('alert/success', PlantMessagesService.getMessageAfterRemovingPlant(), { root: true });
+            },
+            error => {
+                commit('deletePlantError', error);
+                dispatch('alert/error', PlantMessagesService.getMessageAfterRemovingPlantError(error.response), { root: true });
+            }
+        )
+
     }
 };
 
 const mutations = {
+    deletePlantRequest(state) {
+        state.status = { removingPlant: true }
+    },
+    deletePlantSuccess(state, plant) {
+        state.status = { removingPlant: false }
+
+        for(let ia = 0; ia < state.plants.length; ia++) {
+            let plantElement = state.plants[ia];
+
+            if(plantElement.id == plant.id) {
+                state.plants.splice(ia, 1)
+                break;
+            }
+        }
+    },
+    deletePlantError(state) {
+        state.status = {};
+    },
     getMeasurementsRequest(state) {
         state.status = { gettingMeasurements: true }
     },
     getMeasurementsSuccess(state, measurements) {
+        console.log("SUCCESS!")
+        console.log(measurements)
+
         state.measurements = measurements;
-        state.status = {}
+        console.log("TO FALSE")
+        state.status = { gettingMeasurements: false }
     },
     getMeasurementsError(state) {
         state.measurements = []
@@ -111,6 +152,11 @@ const mutations = {
         state.currentPlant.name = plant.name;
         state.currentPlant.temperature = plant.temperature;
         state.currentPlant.color = plant.color;
+        state.currentPlant.id_preset = plant.preset.id;
+
+        console.log("Current plant")
+        console.log(plant.preset)
+        state.currentPlant.preset = plant.preset;
 
         state.status = { updatingPlant: false }
     },
@@ -128,6 +174,7 @@ const mutations = {
     },
     createPlantSuccess(state, plant) {
         state.status = { creatingPlant: false }
+        state.plants.push(plant)
     },
     createPlantError(state) {
         state.status = {};

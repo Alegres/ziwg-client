@@ -4,6 +4,7 @@ import { UserMessagesService } from '@/services/api/user/UserMessagesService';
 import { UserService } from '@/services/api/user/UserService';
 
 const user = JSON.parse(localStorage.getItem('user'));
+
 const state = user
     ? { status: { loggedIn: true }, user }
     : { status: {}, user: null };
@@ -29,12 +30,42 @@ const actions = {
             .then(
                 user => {
                     commit('loginSuccess', user);
+
                     router.push('/');
                 },
                 error => {
-                    console.log(error)
                     commit('loginFailure', error);
                     dispatch('alert/error', UserMessagesService.getMessageAfterLogin(error.response), { root: true });
+                }
+            );
+    },
+    updateUser({ dispatch, commit }, user) {
+        commit('updateUserRequest', user);
+    
+        UserService.updateUser(user)
+            .then(
+                success => {
+                    commit('updateUserSuccess', user);
+                    dispatch('alert/success', UserMessagesService.getMessageAfterUpdatingUserSuccess(), { root: true });
+                },
+                error => {
+                    commit('updateUserError', error);
+                    dispatch('alert/error', UserMessagesService.getMessageAfterUpdatingUserError(), { root: true });
+                }
+            );
+    },
+    changePassword({ dispatch, commit }, passwordSet) {
+        commit('updateUserRequest', passwordSet);
+    
+        UserService.changePassword(passwordSet)
+            .then(
+                success => {
+                    commit('updateUserSuccess', passwordSet);
+                    dispatch('alert/success', UserMessagesService.getMessageAfterChangingPasswordSuccess(), { root: true });
+                },
+                error => {
+                    commit('updateUserError', error);
+                    dispatch('alert/error', UserMessagesService.getMessageAfterChangingPasswordError(), { root: true });
                 }
             );
     },
@@ -65,6 +96,15 @@ const actions = {
 };
 
 const mutations = {
+    updateUserRequest(state) {
+        state.status = { updatingUser: true };
+    },
+    updateUserSuccess(state, passwordSet) {
+        state.status = { updatingUser: false };
+    },
+    updateUserError(state, error) {
+        state.status = {};
+    },
     getUsersRequest(state) {
         state.status = { gettingUsers: true };
     },

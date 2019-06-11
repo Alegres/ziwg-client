@@ -48,6 +48,7 @@
             aria-labelledby="navbarDropdown"
             v-if="isDropdownMenuVisible"
             v-click-outside="toggleDropdownMenu"
+            v-on:click="toggleDropdownMenu"
           >
             <router-link v-if="!user"
               :to="$i18nRoute({ name: 'login'})"
@@ -63,7 +64,7 @@
       </ul>
       <ul id="nav-settings">
         <li>
-          <div class="pointer" v-if="user"><fa-icon icon="cog" class="cog-ico" /></div>
+          <div class="pointer" v-if="user" v-on:click="goToSettings()"><fa-icon icon="cog" class="cog-ico" /></div>
         </li>
       </ul>
     </div>
@@ -73,6 +74,7 @@
 <script>
 import ClickOutside from "vue-click-outside";
 import { mapState, mapActions } from "vuex";
+import { LanguageRouter } from '@/plugins/LanguageRouter';
 
 export default {
   data: function() {
@@ -99,6 +101,9 @@ export default {
     },
     logoutUser: function() {
       this.logout();
+    },
+    goToSettings: function() {
+      LanguageRouter.pushToPath('/board/settings')
     }
   },
   directives: {

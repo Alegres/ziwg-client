@@ -15,10 +15,11 @@
       </div>
     </div>
     <div class="nav-element-content">
-        <p v-if="!plants">{{ $t('pages.plants.no_plants') }}</p>
+        <p v-if="plants.length == 0">{{ $t('pages.plants.no_plants') }}</p>
         <ul class="nav-list">
             <li v-for="plant in plants">
-                    <div class="color-circle" v-bind:style="{ backgroundColor: plant.color }"></div>
+                    <div class="color-circle" v-if="!plant.color" style="background-color: grey"></div>
+                    <div class="color-circle" v-else v-bind:style="{ backgroundColor: plant.color }"></div>
                     <div class="square-description pointer" v-on:click="goToPlant(plant)">{{ plant.name }}</div>
             </li>
         </ul>
@@ -35,13 +36,12 @@ export default {
     return {};
   },
   created() {
-    this.getAllPlants();
+
   },
   computed: {
     ...mapState("plant", ["status", "plants"])
   },
   methods: {
-    ...mapActions("plant", ["getAllPlants"]),
     createPlant: function() {
         LanguageRouter.pushToPath('/board/create-plant')
     },

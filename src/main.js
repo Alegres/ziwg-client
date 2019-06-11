@@ -9,8 +9,19 @@ import axios from 'axios'
 import { store } from '@/store/store'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import VuejsDialog from 'vuejs-dialog';
+import ChartJs from 'vue-chartjs'
+import ChartJsAnnotation from 'chartjs-plugin-annotation'
+ 
+// include the default style
+import 'vuejs-dialog/dist/vuejs-dialog.min.css';
 import { fas } from '@fortawesome/free-solid-svg-icons'
+
 import _ from 'lodash';
+
+Vue.use(VuejsDialog);
+Vue.use(ChartJs);
+Vue.use(ChartJsAnnotation);
 
 library.add(fas)
 Vue.component('fa-icon', FontAwesomeIcon)

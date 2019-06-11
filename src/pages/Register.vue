@@ -92,6 +92,26 @@
             {{ $t('pages.register.passwords_dont_match') }}
         </div>
       </div>
+      <hr />
+      <div class="form-group">
+        <input
+          type="text"
+          v-model="phone"
+          autocomplete="off"
+          class="form-control"
+          name="phone"
+          placeholder="Phone number"
+          required
+          autofocus
+          :class="{ 'is-invalid': submitted && (!phone || !isPhoneCorrect())}"
+        >
+        <div v-show="submitted && !phone" class="invalid-feedback">
+            {{ $t('pages.register.username_required') }}
+        </div>
+        <div v-show="submitted && !isPhoneCorrect()" class="invalid-feedback">
+            {{ $t('pages.register.phone_not_correct') }}
+        </div>
+      </div>
       <div class="form-group">
         <button class="btn btn-lg btn-primary btn-block" type="submit" :disabled="status.registering">
             {{ $t('pages.register.submit_form') }}
@@ -118,7 +138,8 @@ export default {
       repeatedUsername: "",
       password: "",
       repeatedPassword: "",
-      submitted: false
+      submitted: false,
+      phone: ""
     }
   },
   methods: {
@@ -130,7 +151,8 @@ export default {
         let user = {
           name: this.name,
           username: this.username,
-          password: this.password
+          password: this.password,
+          phone: this.phone
         }
 
         this.register(user);
@@ -141,6 +163,9 @@ export default {
     },
     isEmailCorrect: function() {
       return EmailService.isEmailCorrect(this.username)
+    },
+    isPhoneCorrect: function() {
+      return !isNaN(this.phone) && this.phone.length > 5
     }
   },
   computed: {

@@ -1,6 +1,9 @@
 <template>
   <div class="board">
     <div id="side-bar">
+        <div class="user-info">
+            Hello {{ user.useremail }}!
+        </div>
         <PlantsComponent></PlantsComponent>
         <PresetsComponent></PresetsComponent>
     </div>
@@ -16,16 +19,28 @@
 import { LanguageRouter } from "@/plugins/LanguageRouter";
 import PresetsComponent from "@/components/PresetsComponent";
 import PlantsComponent from "@/components/PlantsComponent";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "Board",
-  methods: {},
+  methods: {
+    ...mapActions("plant", ["getAllPlants"]),
+    ...mapActions("preset", ["getAllPresets"])
+  },
+  created() {
+      // Loading requests order - Stammdaten global
+      this.getAllPresets().then(function() {
+          this.getAllPlants();
+      }.bind(this))
+  },
   components: { PresetsComponent, PlantsComponent },
   data: function() {
       return {
-        user: 'Alegres',
         currentKey: 0
       }
+  },
+  computed: {
+    ...mapState("account", ["status", "user"])
   }
 };
 </script>
@@ -73,7 +88,7 @@ a {
     float: left;
     padding: 10px;
     border-right: 1px solid #d6d6d6;
-    height: 1000px;
+    min-height: 1600px;
 }
 
 .presets-wrapper {
@@ -82,7 +97,7 @@ a {
 
 #workspace {
     width: 69%;
-    height: 1000px;
+    min-height: 1700px;
     background: white;
     float: left;
     padding: 10px;
@@ -95,5 +110,7 @@ a {
     font-size: 15px;
 }
 
-
+.user-info {
+    margin-top: 5px;
+}
 </style>

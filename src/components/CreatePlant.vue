@@ -6,14 +6,14 @@
       <div class="form-group">
         <input
           type="text"
-          v-model="name"
+          v-model="plant.name"
           autocomplete="off"
           class="form-control"
           name="name"
           placeholder="Plant name"
           autofocus
           required
-          :class="{ 'is-invalid': submitted && !name }"
+          :class="{ 'is-invalid': submitted && !plant.name }"
         >
         <div v-show="submitted && !name" class="invalid-feedback">
             {{ $t('pages.plants.plantname_required') }}
@@ -62,6 +62,7 @@ import ColorPicker from '@/components/ColorPicker'
 import { PasswordService } from '@/services/PasswordService.js'
 import { EmailService } from '@/services/EmailService.js'
 import { MAX_OPTIMAL_TEMPERATURE, MIN_OPTIMAL_TEMPERATURE } from '@/constants/startup'
+import { LanguageRouter } from "@/plugins/LanguageRouter";
 
 export default {
   name: 'CreatePlant',
@@ -73,7 +74,8 @@ export default {
       plantColor: null,
       showPresetPicker: false,
       selectedPreset: null,
-      presetName: ""
+      presetName: "",
+      plant: {}
     }
   },
   methods: {
@@ -83,12 +85,12 @@ export default {
 
       const color = this.plantColor.name
       const preset = this.selectedPreset;
-      const name = this.name;
 
-      if(name && preset && color) {
-        this.createPlant({ name, preset, color });
-        LanguageRouter.pushToPath('/board/plant/' + name);
-      }
+      this.plant.color = color;
+      this.plant.id_preset = preset.id;
+
+      this.createPlant(this.plant);
+      LanguageRouter.pushToPath('/board/plant/' + this.plant.name);
     },
     setSelectedColorFromPicker(selectedColor) {
         this.plantColor = selectedColor
